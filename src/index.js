@@ -18,6 +18,7 @@ db_config = {
   password: process.env.pass,
   database: process.env.dbname,
   port: 3306,
+  dateStrings: "date",
 };
 
 function handleDisconnect() {
@@ -74,6 +75,7 @@ app.get("/NewActivities", (req, res) => {
   const currentDate = new Date().toLocaleTimeString("en-US", {
     timeZone: "Egypt",
   });
+  console.log("sending New Activities", currentDate);
   db.query(
     "SELECT * FROM Activity WHERE startDate > DATE_ADD(CURDATE(), INTERVAL -3 DAY)",
     function (err, results, fields) {
@@ -82,17 +84,73 @@ app.get("/NewActivities", (req, res) => {
   );
 });
 
-app.get("/YourActivities", (req, res) => {
+app.post("/YourActivities", (req, res) => {
+  console.log(
+    "sending Your activities data",
+    new Date().toLocaleTimeString("en-US", { timeZone: "Egypt" })
+  );
   db.query(
-    "SELECT * FROM Activity inner join EmployeeSubActivity on Activity.id = EmployeeSubActivity.ActivityId",
+    `SELECT * FROM Activity inner join EmployeeSubActivity on Activity.id = EmployeeSubActivity.ActivityId WHERE EmployeeSubActivity.EmployeeId = ${req.body.employeeId}`,
     function (err, results, fields) {
       res.json(results);
     }
   );
 });
+app.post("/EmployeeDepartments", (req, res) => {
+  console.log(
+    "sending employee departments data",
+    new Date().toLocaleTimeString("en-US", { timeZone: "Egypt" })
+  );
+  db.query(
+    `SELECT * FROM EmployeeWorkDepartment WHERE EmployeeWorkDepartment.employeeId = ${req.body.employeeId}`,
+    function (err, results, fields) {
+      res.json(results);
+    }
+  );
+});
+app.post("/EmployeeGainedBadges", (req, res) => {
+  console.log(
+    "sending employee Gained Badges data",
+    new Date().toLocaleTimeString("en-US", { timeZone: "Egypt" })
+  );
+  db.query(
+    `SELECT * FROM EmployeeGainBadge INNER JOIN Badge WHERE EmployeeGainBadge.employeeId = ${req.body.employeeId}`,
+    function (err, results, fields) {
+      res.json(results);
+    }
+  );
+});
+app.get("/EmployeeRanking", (req, res) => {
+  console.log(
+    "sending employee Rankings data",
+    new Date().toLocaleTimeString("en-US", { timeZone: "Egypt" })
+  );
+  db.query(`SELECT * FROM EmployeeRanking`, function (err, results, fields) {
+    res.json(results);
+  });
+});
+app.get("/PracticeRanking", (req, res) => {
+  console.log(
+    "sending Practice Rankings data",
+    new Date().toLocaleTimeString("en-US", { timeZone: "Egypt" })
+  );
+  db.query(`SELECT * FROM PracticeRanking`, function (err, results, fields) {
+    res.json(results);
+  });
+});
+
+app.get("/DepartmentRanking", (req, res) => {
+  console.log(
+    "sending Departments Ranking data",
+    new Date().toLocaleTimeString("en-US", { timeZone: "Egypt" })
+  );
+  db.query(`SELECT * FROM DepartmentRanking`, function (err, results, fields) {
+    res.json(results);
+  });
+});
 
 app.post("/AddActivity", (req, res) => {
-  console.log(req);
+  console.log(req.body);
   //
   // db.query(
   //   "SELECT * FROM Activity inner join EmployeeSubActivity on Activity.id = EmployeeSubActivity.ActivityId",
