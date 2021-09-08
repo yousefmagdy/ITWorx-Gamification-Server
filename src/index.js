@@ -168,7 +168,7 @@ app.post("/AddNewCycle", (req, res) => {
 
 app.post("/EditBadge", (req, res) => {
   console.log(req.body);
-
+  //
 });
 
 app.post("/EditCycle", (req, res) => {
