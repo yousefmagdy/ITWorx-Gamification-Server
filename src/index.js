@@ -158,12 +158,12 @@ app.post("/AddActivity", (req, res) => {
   //     res.json(results);
   //   }
   // );
+  //
 });
 
 
 app.post("/AddNewCycle", (req, res) => {
   console.log(req.body);
-
 });
 
 app.post("/EditCycle", (req, res) => {
