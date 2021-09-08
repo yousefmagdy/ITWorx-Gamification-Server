@@ -166,15 +166,16 @@ app.post("/AddNewCycle", (req, res) => {
   console.log(req.body);
 });
 
+app.post("/EditBadge", (req, res) => {
+  console.log(req.body);
+
+});
+
 app.post("/EditCycle", (req, res) => {
   console.log(req.body);
 
 });
 
-app.post("/EditBadge", (req, res) => {
-  console.log(req.body);
-
-});
 
 
 app.post("/CreateBadge", (req, res) => {
