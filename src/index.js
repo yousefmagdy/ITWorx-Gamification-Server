@@ -144,6 +144,29 @@ app.post("/AddActivity", (req, res) => {
   // );
 });
 
+
+
+app.post("/AddNewCycle", (req, res) => {
+  console.log(req.body);
+});
+
+app.post("/EditBadge", (req, res) => {
+  console.log(req.body);
+  //
+});
+
+app.post("/EditCycle", (req, res) => {
+  console.log(req.body);
+
+});
+
+
+
+app.post("/CreateBadge", (req, res) => {
+  console.log(req.body);
+
+});
+
 const handleDbError = (err) => {
   console.log(err);
 };
