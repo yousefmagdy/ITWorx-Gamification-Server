@@ -1,7 +1,7 @@
 const TokenGenerator = require("uuid-token-generator");
 const tokgen = new TokenGenerator();
 const moment = require("moment");
-const db = require("./databaseService");
+const db = require("../Service/databaseService");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 

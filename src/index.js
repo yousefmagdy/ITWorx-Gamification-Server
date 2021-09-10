@@ -5,8 +5,10 @@ var cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 var cors = require("cors");
 require("dotenv").config();
-const userAuth = require("./userAuth");
-const adminAuth = require("./adminAuth");
+const userAuth = require("./Middleware/userAuth");
+const adminAuth = require("./Middleware/adminAuth");
+const activityRoutes = require("./Routes/activity");
+const employeeRoutes = require("./Routes/employee");
 
 const app = express();
 app.use(
@@ -21,9 +23,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.cookie_HMAC_secret));
 app.use(userAuth);
 
-require("./authenticationRoutes")(app);
+// Routes Setup
+require("./Routes/authenticationRoutes")(app);
+app.use("/activity", activityRoutes);
+app.use("/employee", employeeRoutes);
 
-const db = require("./databaseService");
+const db = require("./Service/databaseService");
 
 app.get("/", (req, res) => {
   // console.log(req.cookies);
