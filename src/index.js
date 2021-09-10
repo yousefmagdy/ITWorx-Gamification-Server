@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 var cors = require("cors");
 require("dotenv").config();
 const userAuth = require("./userAuth");
+const adminAuth = require("./adminAuth");
 
 const app = express();
 app.use(
@@ -20,7 +21,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.cookie_HMAC_secret));
 app.use(userAuth);
 
-require("./authentication").routes(app);
+require("./authenticationRoutes")(app);
+
 const db = require("./databaseService");
 
 app.get("/", (req, res) => {
@@ -28,7 +30,8 @@ app.get("/", (req, res) => {
   res.json({ message: "From the Node Server !" });
 });
 
-app.get("/db", (req, res) => {
+app.get("/db", adminAuth, (req, res) => {
+  console.log("db triggered");
   db.query("SELECT * FROM `Employee`", function (err, results, fields) {
     console.log(results); // results contains rows returned by server
     res.send(results);

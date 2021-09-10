@@ -1,28 +1,23 @@
 const { v4: getuuid } = require("uuid");
-let { loggedTokens } = require("./authentication");
-const verifytoken = (token) => {
-  return true;
-};
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const userAuth = (req, res, next) => {
-  console.log("userAuth", loggedTokens);
   if (req.originalUrl == "/login") {
     next();
     return;
   }
-  let auth = req.signedCookies["auth"];
-  console.log("auth cookie", auth);
-  if (!auth) {
-    res.status(403).send("unathorized");
-    return;
+  const authcookie = req.signedCookies["auth"];
+  if (typeof authcookie !== "undefined") {
+    const decodedData = jwt.verify(authcookie, process.env.cookie_HMAC_secret);
+    // Putting the user data in the request object
+    req.user = decodedData;
+    //
+    console.log("user auth ok", decodedData);
+    next();
   } else {
-    let accesstoken = auth["token"];
-    if (!accesstoken | !verifytoken(accesstoken)) {
-      res.status(403).send("unathorized");
-      return;
-    } else {
-      next();
-    }
+    console.log("denied auth ok");
+    res.status(403).send("unathorized");
   }
 };
 
