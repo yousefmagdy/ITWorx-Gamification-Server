@@ -1,75 +1,49 @@
 const express = require("express");
+var path = require("path");
+var fs = require("fs"); //file system
+var cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 var cors = require("cors");
-var mysql = require("mysql2");
-const dotenv = require("dotenv");
-dotenv.config();
+require("dotenv").config();
+const userAuth = require("./Middleware/userAuth");
+const adminAuth = require("./Middleware/adminAuth");
+const activityRoutes = require("./Routes/activity");
+const employeeRoutes = require("./Routes/employee");
 
-//create express app
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.React_Server_Origin,
+    credentials: true,
+    optionSuccessStatus: 200,
+  })
+);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser(process.env.cookie_HMAC_secret));
+app.use(userAuth);
 
-let db;
-db_config = {
-  host: process.env.host,
-  user: process.env.user,
-  password: process.env.pass,
-  database: process.env.dbname,
-  port: 3306,
-  dateStrings: "date",
-};
+// Routes Setup
+require("./Routes/authenticationRoutes")(app);
+app.use("/activity", activityRoutes);
+app.use("/employee", employeeRoutes);
 
-function handleDisconnect() {
-  db = mysql.createConnection(db_config); // Recreate the connection, since
-  // the old one cannot be reused.
-
-  db.connect(function (err) {
-    // The server is either down
-    if (err) {
-      // or restarting (takes a while sometimes).
-      console.log("error when connecting to db:", err);
-      setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
-    } // to avoid a hot loop, and to allow our node script to
-  }); // process asynchronous requests in the meantime.
-  // If you're also serving http, display a 503 error.
-  db.on("error", function (err) {
-    console.log("db error", err);
-    if (err.code === "PROTOCOL_CONNECTION_LOST") {
-      // Connection to the MySQL server is usually
-      handleDisconnect(); // lost due to either server restart, or a
-    } else {
-      // connnection idle timeout (the wait_timeout
-      throw err; // server variable configures this)
-    }
-  });
-}
-
-handleDisconnect();
+const db = require("./Service/databaseService");
 
 app.get("/", (req, res) => {
+  // console.log(req.cookies);
   res.json({ message: "From the Node Server !" });
 });
 
-app.get("/db", (req, res) => {
+app.get("/db", adminAuth, (req, res) => {
+  console.log("db triggered");
   db.query("SELECT * FROM `Employee`", function (err, results, fields) {
     console.log(results); // results contains rows returned by server
     res.send(results);
   });
 });
 //
-app.get("/AllActivities", (req, res) => {
-  console.log(
-    "sending all activities data",
-    new Date().toLocaleTimeString("en-US", { timeZone: "Egypt" })
-  );
-  db.query("SELECT * FROM `Activity`", function (err, results, fields) {
-    // console.log(fields);
-    res.json(results);
-  });
-  // res.send(res.data);
-});
+
 
 app.get("/NewActivities", (req, res) => {
   const currentDate = new Date().toLocaleTimeString("en-US", {
@@ -160,6 +134,29 @@ app.post("/AddActivity", (req, res) => {
   // );
   //
 });
+
+
+app.post("/AddNewCycle", (req, res) => {
+  console.log(req.body);
+});
+
+app.post("/EditBadge", (req, res) => {
+  console.log(req.body);
+  //
+});
+
+app.post("/EditCycle", (req, res) => {
+  console.log(req.body);
+
+});
+
+
+
+app.post("/CreateBadge", (req, res) => {
+  console.log(req.body);
+
+});
+
 
 
 app.post("/AddNewCycle", (req, res) => {
