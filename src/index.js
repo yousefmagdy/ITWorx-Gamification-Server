@@ -43,17 +43,7 @@ app.get("/db", adminAuth, (req, res) => {
   });
 });
 //
-app.get("/AllActivities", (req, res) => {
-  console.log(
-    "sending all activities data",
-    new Date().toLocaleTimeString("en-US", { timeZone: "Egypt" })
-  );
-  db.query("SELECT * FROM `Activity`", function (err, results, fields) {
-    // console.log(fields);
-    res.json(results);
-  });
-  // res.send(res.data);
-});
+
 
 app.get("/NewActivities", (req, res) => {
   const currentDate = new Date().toLocaleTimeString("en-US", {

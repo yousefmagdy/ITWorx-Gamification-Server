@@ -5,9 +5,9 @@ const db = require("../Service/databaseService");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const allowedLoggedTime = 60 * 1000;
+const allowedLoggedTime = 60 * 60 * 1000;
 const verifyUser = (email, password, isadminlogin) => {
-  db.connect();
+  // db.connect();
   const sqlQuery = isadminlogin
     ? "SELECT * FROM `Admin` WHERE email=? AND password=?"
     : "SELECT * FROM `Employee` WHERE isActive=true AND email=? AND password=?";
@@ -38,7 +38,7 @@ function routes(app) {
         jwt.sign(
           encodedData,
           process.env.cookie_HMAC_secret,
-          { expiresIn: "1m" },
+          { expiresIn: "1h" },
           (err, token) => {
             if (err) {
               console.log(err);
@@ -47,6 +47,7 @@ function routes(app) {
               signed: true,
               maxAge: allowedLoggedTime,
             });
+
             res.status(200).send("OK");
           }
         );
